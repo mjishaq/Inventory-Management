@@ -1,0 +1,15 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                   STEPS TO FOLLOW
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Step 1 : Go through the User Guide Document.
+
+Step 2 : Goto [ Predictive Model\Installer\Anaconda Setup ] folder and run Anaconda_Installer.bat
+
+Step 3 : Goto [ Python Predictive Model\Model Runner ] folder and run Model_Runner.bat and access URL [ ]
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Thank You !!!!!
+
+Have a Nice Day 
