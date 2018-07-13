@@ -118,7 +118,7 @@ def addproduct():
         pname=product_id+user
         now = datetime.datetime.now()
         pcreate_dt= now.strftime("%Y-%m-%d %H:%M")
-        thisSupplier=supplier.find({'_id':pname})
+        thisSupplier=supplier.find_one({'_id':pname})
         if thisSupplier is None:
             supplier.insert({'_id':pname,'product_id':product_id,'product_name' : productname , 'username' : user,'Product_type' : Producttype,'product_description' : description,'price_per_qty' : str(price_per_qty),'product_quantity': str(quantity),'delivery_day': str(delivery_day), 'no_orders': str(0) ,'product_create_dt': pcreate_dt})
         else:
