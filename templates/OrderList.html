@@ -234,13 +234,13 @@ $scope.fetchData();
                 </td>
                 <td class="form-group">
                             
-                     <input type="number" class="form-control" ng-model="record.no_orders" id="txtUsername" required>
+                     <input type="number" class="form-control" ng-pattern="[0-9]" ng-model="record.no_orders"  id="txtUsername" required>
                 </td>
                 <td>
                 <div ng-if="record.product_quantity > '0' && record.no_orders>0 && record.product_quantity >= record.no_orders"  style="cursor:pointer;color:#ADA5FA;" ng-click=showRunPopUp(record) class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>
                  </td>
                  <td>
-                 <div ng-if="record.product_quantity <= '0'" style="cursor:pointer;color:#ADA5FA;" ng-click=addToWishList(record) class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
+                 <div ng-if="record.product_quantity <= '0' && record.no_orders>0 " style="cursor:pointer;color:#ADA5FA;" ng-click=addToWishList(record) class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
                 </td>
                 
                 
