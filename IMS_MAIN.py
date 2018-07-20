@@ -122,7 +122,6 @@ def addproduct():
         if thisSupplier is None:
             supplier.insert({'_id':pname,'product_id':product_id,'product_name' : productname , 'username' : user,'Product_type' : Producttype,'product_description' : description,'price_per_qty' : str(price_per_qty),'product_quantity': str(quantity),'delivery_day': str(delivery_day), 'no_orders': str(0) ,'product_create_dt': pcreate_dt})
         else:
-            #new_qty=int(quantity)+thisSupplier['price_per_qty']
             result=supplier.update_one({'_id':pname},{'$set':{'price_per_qty' : str(price_per_qty),'product_quantity': str(quantity),'delivery_day': str(delivery_day)}})
         
         
@@ -389,7 +388,6 @@ def getWishListData():
         wishListData.append(tempSupplier)
 
      return json.dumps(wishListData)
-
 @app.route('/addToWishList',methods=['POST','GET'])
 @login_required
 def addToWishList():
@@ -407,11 +405,18 @@ def addToWishList():
         sub_contractor_id=recievedData['s_user_name']
         sub_product_id=product_id+sub_contractor_id
       #  available_quantity=recievedData['available_quantity']
-        wish_id=user+str(randint(10000,99999))
+        wish_id=user+product_id
         now = datetime.datetime.now()
         order_dt= now.strftime("%Y-%m-%d %H:%M")
+        wish_list_detail=wish_list_details.find_one({'wish_id' : wish_id})
+        print(wish_list_detail)
         try:
-            writeResult=wish_list_details.insert_one({'_id' : wish_id ,'wish_id':wish_id,'product_id':product_id,
+            if wish_list_detail is not None:
+                quantity=int(wish_list_detail['quantity'])+int(no_orders)
+                wish_list_details.update_one({'_id' : wish_list_detail['wish_id'] },{"$set" : {'quantity' : str(quantity)}})
+                return redirect(url_for('subcontract'))
+            else:
+                wish_list_details.insert_one({'_id' : wish_id ,'wish_id':wish_id,'product_id':product_id,
                                                           'sub_product_id' : sub_product_id,'sup_product_id' : '',
                                                           'product_name' : product_name,'Product_type' : Product_type,
                                                           'product_description' : product_description, 
@@ -419,7 +424,8 @@ def addToWishList():
                                                           'quantity' : str(no_orders),
                                                           'wish_stauts' : 'PE',
                                                           'wish_dt': order_dt,'supplier_id':user,'sub_contractor_id' : sub_contractor_id})
-            return redirect(url_for('subcontract'))
+                return redirect(url_for('subcontract'))
+                
         except pymongo.errors.DuplicateKeyError as e:
             print('IN exception')
 @app.route('/placeOrder',methods=['POST','GET'])
