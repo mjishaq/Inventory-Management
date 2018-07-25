@@ -116,15 +116,15 @@
                 </div>
                 <br>
 				   <div>
-                <label>Price/Quantity*</label><input type="number" class="form-control" name="price" placeholder="Price/Quantity" ng-model= "form.price" required>
+                <label>Price/Quantity*</label><input type="text"  pattern="[0-9]{0,20}" title="Enter only numbers " maxlength="6" class="form-control" name="price" placeholder="Price/Quantity" ng-model= "form.price" required>
                 </div>
                 <br>
 				   <div>
-                <label>Quantity Available*</label><input type="number"  class="form-control" name="quantity" placeholder="Quantity Available" ng-model= "form.quantity" required>
+                <label>Quantity Available*</label><input type="text"  pattern="[0-9]{0,20}" maxlength="6" title="Enter only numbers " class="form-control" name="quantity" placeholder="Quantity Available" ng-model= "form.quantity" required>
                 </div>
 				   <br>
 				    <div>
-                 <label>Delivery Within Days*</label><input type="number" class="form-control" name="delivery" placeholder="Delivery Within Days" ng-model= "form.delivery" required>
+                 <label>Delivery Within Days*</label><input type="text"  pattern="[0-9]{0,20}" maxlength="6" title="Enter only numbers " class="form-control" name="delivery" placeholder="Delivery Within Days" ng-model= "form.delivery" required>
                  </div>
                 <br>
                  <span align ="CENTER"><input type="submit" ngClick="Submit" ></span>

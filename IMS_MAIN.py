@@ -739,7 +739,7 @@ def getCompleteOrder():
 
      order_details = mongo.db.order_details
      user=session['username']
-     orders=order_details.find({'supplier_id' : user,'delivery_stauts' : 'CO'})
+     orders=order_details.find({'sub_contractor_id' : user})
      print(orders)
     #return render_template('OrderList.html',orderStatusSnapShot=order_status_snapshot)
      orderList=[]

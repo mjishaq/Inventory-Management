@@ -215,7 +215,7 @@ $scope.fetchData();
                         <td>{{'{{product.product_quantity  }}'}}</td>
                         <td class="form-group">
                                     
-                             <input type="text" class="form-control" ng-model="product.no_orders" id="txtUsername">
+                             <input type="text" class="form-control" pattern="\d*" maxlength="6" ng-model="product.no_orders" id="txtUsername">
                         </td>
                         <td>
                         <div ng-if="product.product_quantity > '0'  && product.product_quantity >=product.no_orders"  style="cursor:pointer;color:#ADA5FA;" ng-click=placeOrderToSuContractor(product) class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>

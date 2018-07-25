@@ -131,7 +131,10 @@
                             <td>{{'{{record.price  }}'}}</td>
                             <td>{{'{{record.quantity  }}'}}</td>
                             <td>{{'{{record.order_dt }}'}}</td> 
-                            <td style="color:#3CF320;" >Delevered </td>    
+                            <td>
+                            <div ng-if="record.delivery_stauts == 'CO'"  style="color:#3CF320;" > <b>Delivered </b></div>
+                            <div ng-if="record.delivery_stauts == 'DI'"  style="color:#F3206D;" ><b> Declined</b> </div>
+                           </td>
                             
             </tr>
         </table>

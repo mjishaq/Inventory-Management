@@ -70,16 +70,16 @@
                 <div>
                 <label>Product Name*</label> 
                <div>
-               <input type="text" class="form-control" name="productname" placeholder="Product Name" ng-model= "form.productname" required>
+               <input type="text" class="form-control" name="productname" pattern="([a-zA-Z]){0,20}" title="Please Enter Valid Product Name" placeholder="Product Name" ng-model= "form.productname" required>
                 </div>
              </div>
                <br>
                 <div>
-                <label>Product Type*</label><input type="text" class="form-control" name="Producttype" placeholder="Product Type" ng-model= "form.Producttype" required>
+                <label>Product Type*</label><input type="text" class="form-control" name="Producttype" pattern="([a-zA-Z]){0,20}" title="Please Enter Valid Product Type" placeholder="Product Type" ng-model= "form.Producttype" required>
                 </div>
                 <br>
 				   <div>
-                <label>Description*</label><input type="text" class="form-control" name="description" placeholder="Description" ng-model= "form.description" required>
+                <label>Description*</label><input type="text" class="form-control" name="description" pattern="([a-zA-Z]){0,20}" title="Please Enter Valid Product Description" placeholder="Description" ng-model= "form.description" required>
                </div>
             <br>
 
