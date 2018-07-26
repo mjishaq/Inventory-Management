@@ -297,6 +297,26 @@ def upload():
         return render_template('excel_upload.html')
     return render_template('excel_upload.html')
 
+@app.route("/aupload", methods=['GET', 'POST'])
+def aupload():
+    if request.method == 'POST':
+        print (request.files['file'])
+        prodcut_master = mongo.db.prodcut_master
+        f = request.files['file']
+        data_xls = pd.read_excel(f)
+        user_data_json_array=data_xls.to_json(orient='records')
+        parsed = json.loads(user_data_json_array)
+        for item in parsed:
+            print(item)
+            existing_user =prodcut_master.find_one({'product_id': item['product_id']})
+            if existing_user is None:
+                prodcut_master.insert(item)
+                print('Inserted : '+ str(item))
+            else:
+                print('User Already Exsist !!!' + str(item))
+        return render_template('excel_aupload.html')
+    return render_template('excel_aupload.html')
+
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
