@@ -211,17 +211,17 @@ $scope.fetchData();
                 <td>{{'{{record.price_per_qty  }}'}}</td>
                 
                 <td>
-                {{'{{record.product_quantity}}'}}
+                {{'{{record.product_quantity-record.no_orders}}'}}
                 </td>
                  <td class="form-group">
                             
-                     <input type="text" class="form-control" pattern="\d*" maxlength="6" ng-model="record.no_orders"  id="txtUsername" required>
+                     <input type="number" class="form-control" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57"  ng-model="record.new_order"  id="txtUsername" required>
                 </td>
                 <td>
-                 <div ng-if="record.product_quantity > '0' && record.no_orders>0 && record.product_quantity >=record.no_orders"  style="cursor:pointer;color:#ADA5FA;" ng-click=placeOrderSupplier(record) class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>
+                 <div ng-if="record.product_quantity > '0' && record.new_order>0 && record.product_quantity >=record.new_order"  style="cursor:pointer;color:#ADA5FA;" ng-click=placeOrderSupplier(record) class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>
                 </td>
                   <td>
-                 <div ng-if="record.product_quantity <= '0' && record.no_orders>0 " style="cursor:pointer;color:#ADA5FA;" ng-click=addToWishList(record) class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
+                 <div ng-if="record.product_quantity <= '0' && record.new_order>0 " style="cursor:pointer;color:#ADA5FA;" ng-click=addToWishList(record) class="glyphicon glyphicon-heart-empty" aria-hidden="true"></div>
                 </td>
                 
                

@@ -179,6 +179,7 @@ def updateProduct():
         supplier = mongo.db.supplier
         user=session['username']
         productinfo=request.json['info']
+        print(productinfo)
         pname = productinfo['product_name'] 
         product_id=productinfo['product_id']
         price_per_qty=productinfo['price_per_qty']
@@ -190,7 +191,7 @@ def updateProduct():
         print(pname)
         result=supplier.update_one({'_id':pname},{'$set':{'price_per_qty' : price_per_qty,'product_quantity': quantity,'delivery_day': delivery_day,'product_create_dt': pcreate_dt}})
         print(result.modified_count)
-        return redirect(url_for('showallproducts'), param=result.modified_count)
+        return redirect(url_for('showallproducts'))
 
  
 @app.route('/outofstock',methods=['POST','GET'])
@@ -364,6 +365,7 @@ def orderList1():
      for supplier in suppliers:
         #available_quantity=int(supplier['product_quantity'])-int(supplier['no_orders'])
         tempSupplier={
+                '_id' : supplier['_id'],
                 'product_id': supplier['product_id'],
                 'product_name': supplier['product_name'],
                 'Product_type': supplier['Product_type'],
@@ -371,8 +373,9 @@ def orderList1():
                 'price_per_qty' : supplier['price_per_qty'],
                 'product_quantity' : supplier['product_quantity'],
                 'delivery_day' : supplier['delivery_day'],
-                'no_orders' : '',
-                 's_user_name' : supplier['username']
+                'no_orders' : int(supplier['no_orders']),
+                'new_order' : '',
+                's_user_name' : supplier['username']
                 }
         supplierList.append(tempSupplier)
 
@@ -454,29 +457,36 @@ def placeOrder():
     if request.method == 'POST':
         recievedData = request.json['info']
         order_details_staging = mongo.db.order_details_staging
+        sub_contracotor_details=mongo.db.supplier
         #supplier=mongo.db.supplier
         user=session['username']
+        _id = recievedData['_id'] 
         product_id = recievedData['product_id'] 
         product_name=recievedData['product_name'] 
         Product_type=recievedData['Product_type'] 
         product_description=recievedData['product_description'] 
         price=recievedData['price_per_qty'] 
         no_orders=recievedData['no_orders']
+        new_order=recievedData['new_order']
         sub_contractor_id=recievedData['s_user_name']
         sub_product_id=product_id+sub_contractor_id
-      #  available_quantity=recievedData['available_quantity']
+        product_quantity=recievedData['product_quantity']
         order_id=user+str(randint(10000,99999))
         now = datetime.datetime.now()
         order_dt= now.strftime("%Y-%m-%d %H:%M")
+        thisSubContractor = sub_contracotor_details.find_one({'_id' : _id})
+        print(thisSubContractor)
         try:
             writeResult=order_details_staging.insert_one({'_id' : order_id ,'order_id':order_id,'product_id':product_id,
                                                           'sub_product_id' : sub_product_id,'sup_product_id' : '',
                                                           'product_name' : product_name,'Product_type' : Product_type,
                                                           'product_description' : product_description, 
                                                           'price' : str(price),
-                                                          'quantity' : str(no_orders),
+                                                          'quantity' : str(new_order),
                                                           'delivery_stauts' : 'OG',
                                                           'order_dt': order_dt,'supplier_id':user,'sub_contractor_id' : sub_contractor_id})
+            order=int(new_order)+int(thisSubContractor['no_orders'])
+            sub_contracotor_details.update_one({'_id' : _id },{"$set" : {'no_orders' : str(order)}})
             return redirect(url_for('subcontract'))
         except pymongo.errors.DuplicateKeyError as e:
             print('IN exception')
@@ -487,7 +497,7 @@ def placeOrderSupplier():
     if request.method == 'POST':
         recievedData = request.json['info']
         order_details_staging = mongo.db.order_details_staging
-        #supplier=mongo.db.supplier
+        sub_contracotor_details=mongo.db.supplier
         supplier_id  =session['username']
         product_id = recievedData['product_id'] 
         product_name=recievedData['product_name'] 
@@ -495,6 +505,8 @@ def placeOrderSupplier():
         product_description=recievedData['product_description'] 
         price=recievedData['price_per_qty'] 
         no_orders=recievedData['no_orders']
+        new_order=recievedData['new_order']
+        print(new_order)
         sub_contractor_id=recievedData['s_user_name']
         #available_quantity=recievedData['product_quantity']
         order_id=supplier_id+str(randint(10000,99999))
@@ -503,15 +515,19 @@ def placeOrderSupplier():
         order_dt= now.strftime("%Y-%m-%d %H:%M")
         sub_product_id=product_id+sub_contractor_id
         sup_product_id=product_id+supplier_id
+        thisSubContractor = sub_contracotor_details.find_one({'_id' : sub_product_id})
+        print(thisSubContractor)
         try:
             writeResult=order_details_staging.insert_one({'_id' : order_id ,'order_id':order_id,'product_id':product_id,
                                                           'sub_product_id' : sub_product_id,'sup_product_id' : sup_product_id,
                                                           'product_name' : product_name,'Product_type' : Product_type,
                                                           'product_description' : product_description, 
                                                           'price' : str(price),
-                                                          'quantity' : str(no_orders),
+                                                          'quantity' : str(new_order),
                                                           'delivery_stauts' : 'OG',
                                                           'order_dt': order_dt,'supplier_id':supplier_id,'sub_contractor_id' : sub_contractor_id})
+            order=int(new_order)+int(thisSubContractor['no_orders'])
+            sub_contracotor_details.update_one({'_id' : sub_product_id },{"$set" : {'no_orders' : str(order)}})
             return redirect(url_for('subcontract'))
         except pymongo.errors.DuplicateKeyError as e:
             print('IN exception')
@@ -681,10 +697,11 @@ def updateOrderDetails():
                     print(sub_id)
                     thisSubcontracotor=sub_contracotor_details.find_one({'_id' : sub_id})
                     if thisSubcontracotor is not None :
-                        print("Exist")
+                        print("Updating subcontractor to sub_contractor_details ")
                         sub_contracotor_details.update_one({'_id' : sub_id },{"$set" : {'ordered_quantity' : str(int(thisSubcontracotor['ordered_quantity'])+int(ordered_quantity))}})
+                        
                     else:
-                        print("new")
+                        print("Adding new subcontractor to sub_contractor_details")
                         sub_contracotor_details.insert_one({'_id' : sub_id,'sub_contractor_id' : sub_contractor_id,'supplier_id' : supplier_id,'product_id' : product_id,'product_name' : product_name,'ordered_quantity' : ordered_quantity,'price' : price,'delivery_stauts' : delivery_stauts,'order_dt': order_dt,})
                     if thisSupplier is not  None:
                         print("Product found updating existing")
@@ -695,7 +712,8 @@ def updateOrderDetails():
                         if new_sub_qty <0:
                             new_sub_qty=0;
                         result=supplier.update_one({'_id' : sub_product_id },{"$set" : {'product_quantity' : str(new_sub_qty)}})
-                        
+                        new_order=int(thisSubContractor['no_orders'])-int(ordered_quantity)
+                        supplier.update_one({'_id' : sub_product_id },{"$set" : {'no_orders' : str(new_order)}})
                     else:
                         print("New Record----")
                         supplier.insert_one({'_id' : sup_product_id,'product_id' : product_id,'product_name' : product_name,'username' : supplier_id,'Product_type' : Product_type,'product_description' : product_description,'price_per_qty' : price,'product_quantity' : ordered_quantity,'delivery_day' : '1','no_orders' : '0','product_create_dt' : order_dt})
@@ -704,24 +722,30 @@ def updateOrderDetails():
                             new_sub_qty=0;
                         result=supplier.update_one({'_id' : sub_product_id },{"$set" : {'product_quantity' : str(new_sub_qty)}})
                 else:
-                        print("New Record----1")
+                        print("New Record----1 this block is for buyer place an order to supplier and supplier approves ")
                         new_sub_qty=int(thisSubContractor['product_quantity'])-int(ordered_quantity)
                         if new_sub_qty <0:
                             new_sub_qty=0;
                         result=supplier.update_one({'_id' : sub_product_id },{"$set" : {'product_quantity' : str(new_sub_qty)}})
+                        new_order=int(thisSubContractor['no_orders'])-int(ordered_quantity)
+                        supplier.update_one({'_id' : sub_product_id },{"$set" : {'no_orders' : str(new_order)}})
                    
             else:
-                 print("New Record----2")
+                 print("New Record----2 for this block is for buyer/supplier place an order to supplier and supplier Denied ")
                  if order_id[0] =='S':
                      sub_id=supplier_id+sub_contractor_id+product_id
                      thisSubcontracotor=sub_contracotor_details.find_one({'_id' : sub_id})
                      if thisSubcontracotor is not None :
                         print("Exist")
                         sub_contracotor_details.update_one({'_id' : sub_id },{"$set" : {'ordered_quantity' : str(int(thisSubcontracotor['ordered_quantity'])+int(ordered_quantity))}})
+                        new_order=int(thisSubContractor['no_orders'])-int(ordered_quantity)
+                        supplier.update_one({'_id' : sub_product_id },{"$set" : {'no_orders' : str(new_order)}})
                      else:
                         print("new")
                         sub_contracotor_details.insert_one({'_id' : sub_id,'sub_contractor_id' : sub_contractor_id,'supplier_id' : supplier_id,'product_id' : product_id,'product_name' : product_name,'ordered_quantity' : ordered_quantity,'price' : price,'delivery_stauts' : delivery_stauts,'order_dt': order_dt,})
-                    
+                 print("This will execute for buyer declined orders")  
+                 new_order=int(thisSubContractor['no_orders'])-int(ordered_quantity)
+                 supplier.update_one({'_id' : sub_product_id },{"$set" : {'no_orders' : new_order}})
                  writeResult=order_history.insert_one({'_id' : order_id ,'order_id':order_id,'product_id':product_id,
                                                           'sub_product_id' : sub_product_id,'sup_product_id' : sup_product_id,
                                                           'product_name' : product_name,
@@ -880,7 +904,8 @@ def orderList2():
                 'price_per_qty' : supplier['price_per_qty'],
                 'product_quantity' : supplier['product_quantity'],
                 'delivery_day' : supplier['delivery_day'],
-                'no_orders' : '',
+                'no_orders' : int(supplier['no_orders']),
+                'new_order' : '',
                 's_user_name' : supplier['username']
                 }
         supplierList.append(tempSupplier)

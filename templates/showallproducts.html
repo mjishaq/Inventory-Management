@@ -38,8 +38,8 @@ console.log("hi there");
     });
 }
 
-$scope.updateProduct = function(id){
-    				
+$scope.updateProduct = function(){
+    				console.log($scope.info)
 					$http({
 						method: 'POST',
 						url: '/updateProduct',
@@ -52,6 +52,14 @@ $scope.updateProduct = function(id){
 						console.log(error);
 					});
 				}
+$scope.onChangePrice= function(info){
+
+if(info.price_per_qty > 999999)
+{
+alert("Invalid entry for Price")
+}
+   
+}
 
 $scope.editProduct = function(id){
 					$scope.info.id = id;
@@ -157,23 +165,24 @@ $scope.fetchData();
                             <input type="text" class="form-control" ng-model="info.product_name" id="txtIP" disabled>
                         </div>
                         <div class="form-group">
-                            <label for="txtUsername" class="control-label">Price Per\Qty</label>
-                            <input type="text"  pattern="[0-9]{6}" title="Please enter Numbers"  maxlength="6" class="form-control" ng-model="info.price_per_qty" id="txtUsername" required>
+                            <label for="txtUsername" class="control-label">Price Per Qty</label>
+                            <input type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" maxlength="10" class="form-control" ng-model="info.price_per_qty" id="txtUsername" required>
                         </div>
                         <div class="form-group">
                             <label for="txtPassword" class="control-label">Product Quantity</label>
-                            <input type="text"  pattern="\d*" title="Please enter Numbers"  maxlength="6" class="form-control" ng-model="info.product_quantity" id="txtPassword" required>
+                            <input type="text"  onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" maxlength="6" class="form-control" ng-model="info.product_quantity" id="txtPassword" required>
                         </div>
                         <div class="form-group">
                             <label for="txtPort" class="control-label">Delivery Day</label>
-                            <input type="text"  pattern="[0-9]{6}" title="Please enter Numbers" maxlength="6" class="form-control" ng-model="info.delivery_day" id="txtPort" required>
+                            <input type="text"  onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" maxlength="2" class="form-control" ng-model="info.delivery_day" id="txtPort" required>
                         </div>
+                        <div class="modal-footer">
+                    <button type="button"  class="btn btn-default" data-dismiss="modal">Close</button>
+					<button ng-show="!showAdd" id="btnAdd" ng-click="updateProduct()" type="button" class="btn btn-primary"  data-dismiss="modal">Update</button>
+                </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button"  class="btn btn-default" data-dismiss="modal">Close</button>
-					<button ng-show="!showAdd" id="btnAdd" ng-click="updateProduct(record.product_id)" type="button" class="btn btn-primary"  data-dismiss="modal">Update</button>
-                </div>
+                
             </div>
         </div>
     </div>
