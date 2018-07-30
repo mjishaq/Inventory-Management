@@ -105,8 +105,6 @@ def addproduct():
         formData=request.json['info']
         product=formData['product']
         form=formData['formData']
-        print(product)
-        print(form)
         price_per_qty=form['price']
         quantity=form['quantity']
         delivery_day=form['delivery']
@@ -178,7 +176,6 @@ def updateProduct():
         supplier = mongo.db.supplier
         user=session['username']
         productinfo=request.json['info']
-        print(productinfo)
         pname = productinfo['product_name'] 
         product_id=productinfo['product_id']
         price_per_qty=productinfo['price_per_qty']
@@ -187,9 +184,7 @@ def updateProduct():
         now = datetime.datetime.now()
         pcreate_dt= now.strftime("%Y-%m-%d %H:%M")
         pname=product_id+user
-        print(pname)
         result=supplier.update_one({'_id':pname},{'$set':{'price_per_qty' : price_per_qty,'product_quantity': quantity,'delivery_day': delivery_day,'product_create_dt': pcreate_dt}})
-        print(result.modified_count)
         return redirect(url_for('showallproducts'))
 
  
@@ -283,7 +278,6 @@ def login():
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
-        print (request.files['file'])
         users = mongo.db.users
         f = request.files['file']
         data_xls = pd.read_excel(f)
@@ -302,14 +296,12 @@ def upload():
 @app.route("/aupload", methods=['GET', 'POST'])
 def aupload():
     if request.method == 'POST':
-        print (request.files['file'])
         prodcut_master = mongo.db.prodcut_master
         f = request.files['file']
         data_xls = pd.read_excel(f)
         user_data_json_array=data_xls.to_json(orient='records')
         parsed = json.loads(user_data_json_array)
         for item in parsed:
-            print(item)
             existing_user =prodcut_master.find_one({'product_id': item['product_id']})
             if existing_user is None:
                 prodcut_master.insert(item)
@@ -433,7 +425,6 @@ def addToWishList():
         now = datetime.datetime.now()
         order_dt= now.strftime("%Y-%m-%d %H:%M")
         wish_list_detail=wish_list_details.find_one({'wish_id' : wish_id})
-        print(wish_list_detail)
         try:
             if wish_list_detail is not None:
                 quantity=int(wish_list_detail['quantity'])+int(no_orders)
@@ -476,7 +467,6 @@ def placeOrder():
         now = datetime.datetime.now()
         order_dt= now.strftime("%Y-%m-%d %H:%M")
         thisSubContractor = sub_contracotor_details.find_one({'_id' : _id})
-        print(thisSubContractor)
         try:
             writeResult=order_details_staging.insert_one({'_id' : order_id ,'order_id':order_id,'product_id':product_id,
                                                           'sub_product_id' : sub_product_id,'sup_product_id' : '',
@@ -507,7 +497,6 @@ def placeOrderSupplier():
         price=recievedData['price_per_qty'] 
         no_orders=recievedData['no_orders']
         new_order=recievedData['new_order']
-        print(new_order)
         sub_contractor_id=recievedData['s_user_name']
         #available_quantity=recievedData['product_quantity']
         order_id=supplier_id+str(randint(10000,99999))
@@ -517,7 +506,6 @@ def placeOrderSupplier():
         sub_product_id=product_id+sub_contractor_id
         sup_product_id=product_id+supplier_id
         thisSubContractor = sub_contracotor_details.find_one({'_id' : sub_product_id})
-        print(thisSubContractor)
         try:
             writeResult=order_details_staging.insert_one({'_id' : order_id ,'order_id':order_id,'product_id':product_id,
                                                           'sub_product_id' : sub_product_id,'sup_product_id' : sup_product_id,
@@ -553,11 +541,9 @@ def showOrderDetails():
      order_details = mongo.db.order_details
      user=session['username']
      orders=order_details.find({'supplier_id' : user})
-     print(orders)
     #return render_template('OrderList.html',orderStatusSnapShot=order_status_snapshot)
      orderList=[]
      for order in orders:
-        print(order['product_name'])
         tempOrder={
                 'order_id': order['order_id'],
                 'product_id': order['product_id'],
@@ -584,7 +570,6 @@ def getContractorsData():
      sub_contracotor_details = mongo.db.sub_contracotor_details
      user=session['username']
      contracotors=sub_contracotor_details.find({'supplier_id' : user})
-     print(contracotors)
     #return render_template('OrderList.html',orderStatusSnapShot=order_status_snapshot)
      contracotorList=[]
      for contracotor in contracotors:
@@ -614,11 +599,9 @@ def getOrderData():
      order_details_staging = mongo.db.order_details_staging
      user=session['username']
      orders=order_details_staging.find({'sub_contractor_id' : user})
-     print(orders)
     #return render_template('OrderList.html',orderStatusSnapShot=order_status_snapshot)
      orderList=[]
      for order in orders:
-        print(order['product_name'])
         tempOrder={
                 'order_id': order['order_id'],
                 'product_id': order['product_id'],
@@ -661,7 +644,6 @@ def updateOrderDetails():
         supplier_id=record['supplier_id']
         sub_contractor_id=record['sub_contractor_id']
         ordered_quantity=record['quantity']
-        print(ordered_quantity)
         
         thisOrder = order_details.find_one({'order_id' : order_id})
         
@@ -689,13 +671,9 @@ def updateOrderDetails():
                                                           'sub_contractor_id' : sub_contractor_id})
                 order_details_staging.delete_one({'_id' : order_id})
                 if order_id[0] =='S':
-                    print("In suppliers order")
-                   # supplier_id=thisOrder['user_id']
-                    print(supplier_id)
-                    print(product_id)
+                   # supplier_id=thisOrder['user_id']               
                     thisSupplier = supplier.find_one({'_id' : sup_product_id})
-                    sub_id=supplier_id+sub_contractor_id+product_id
-                    print(sub_id)
+                    sub_id=supplier_id+sub_contractor_id+product_id                 
                     thisSubcontracotor=sub_contracotor_details.find_one({'_id' : sub_id})
                     if thisSubcontracotor is not None :
                         print("Updating subcontractor to sub_contractor_details ")
@@ -784,12 +762,10 @@ def getCompleteOrder():
 
      order_details = mongo.db.order_details
      user=session['username']
-     orders=order_details.find({'sub_contractor_id' : user})
-     print(orders)
+     orders=order_details.find({'sub_contractor_id' : user})    
     #return render_template('OrderList.html',orderStatusSnapShot=order_status_snapshot)
      orderList=[]
-     for order in orders:
-        print(order['product_name'])
+     for order in orders:        
         tempOrder={
                 'order_id': order['order_id'],
                 'product_id': order['product_id'],
@@ -807,12 +783,10 @@ def getCompleteOrder():
 @login_required
 def getStock():
      supplier = mongo.db.supplier
-     user=session['username']
-     print(user)
-     productinfo=request.json['info']
-     print(productinfo)
+     user=session['username']   
+     productinfo=request.json['info']   
      product_snapshot = supplier.find({'username': { '$ne': user}})
-     print(product_snapshot)
+    
 
      productSnapShot=[]
      for productStatus in product_snapshot:
@@ -831,8 +805,7 @@ def getStock():
                     's_user_name' : productStatus['username'],
                     'supplier_product_id' : productinfo['product_id']
                     }
-            productSnapShot.append(oSnapshot)
-     print(productSnapShot)
+            productSnapShot.append(oSnapshot)  
      return json.dumps(productSnapShot)
     
 @app.route('/placeOrderToSuContractor',methods=['POST','GET'])
@@ -931,12 +904,10 @@ def getPendingData():
 
      order_details_staging = mongo.db.order_details_staging
      user=session['username']
-     orders=order_details_staging.find({'supplier_id' : user})
-     print(orders)
+     orders=order_details_staging.find({'supplier_id' : user}) 
     #return render_template('OrderList.html',orderStatusSnapShot=order_status_snapshot)
      orderList=[]
-     for order in orders:
-        print(order['product_name'])
+     for order in orders:        
         tempOrder={
                 'order_id': order['order_id'],
                 'product_id': order['product_id'],
@@ -978,8 +949,7 @@ def showusers():
      user_snapshot = user_snapshot.find()
      usersnapShot=[]
      for userStatus in user_snapshot:
-        #qty=int(productStatus['product_quantity']) - int(productStatus['no_orders'])
-        print(userStatus)
+        #qty=int(productStatus['product_quantity']) - int(productStatus['no_orders'])      
         oSnapshot={
                 'name': userStatus['name'],
                 'username': userStatus['username'],
