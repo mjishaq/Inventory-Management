@@ -57,12 +57,12 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="{{ url_for('ahome') }}">Home</a></li>
-        <li><a href="#">User's</a></li>
+        <li><a href="{{ url_for('showallusers') }}">User's</a></li>
         <li><a href="#">Product's</a></li>
-        <li><a href="#">Suppliers's</a></li>
-        <li><a href="#">Buyer's</a></li>
-        <li><a href="#">Order's</a></li>
-        <li><a href="#">Sub Contractors</a></li>
+        <!--<li><a href="#">Suppliers's</a></li> -->
+        <!--<li><a href="#">Buyer's</a></li> -->
+       <!-- <li><a href="#">Order's</a></li> -->
+       <!-- <li><a href="#">Sub Contractors</a></li> -->
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
@@ -78,10 +78,10 @@
       <h5 class="text-danger" align='center'>{{session['username']}}</h5>
       <p><a href="{{ url_for('upload') }}" class="btn-md">User MassData Upload</a></p>
       <p><a href="{{ url_for('aupload') }}" class="btn-md">Product MassData</a></p>
-      <p><a href="#" class="btn-md">Supplier MassData</a></p>
-      <p><a href="#" class="btn-md">Sub Contractor MassData</a></p>
-      <p><a href="#" class="btn-md">Buyer MassData</a></p>
-      <p><a href="#" class="btn-md">Order Details Mass Data</a></p>
+      <!--<p><a href="#" class="btn-md">Supplier MassData</a></p> -->
+      <!--<p><a href="#" class="btn-md">Sub Contractor MassData</a></p>-->
+     <!-- <p><a href="#" class="btn-md">Buyer MassData</a></p> -->
+      <!--<p><a href="#" class="btn-md">Order Details Mass Data</a></p>-->
     </div>
     <div class="col-sm-8 text-left"> 
      
