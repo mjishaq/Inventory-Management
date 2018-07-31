@@ -212,13 +212,13 @@ $scope.fetchData();
                         <td>{{'{{product.product_name }}'}}</td>
                         <td>{{'{{product.subcontractor_id  }}'}}</td>
                         <td>{{'{{product.price_per_qty  }}'}}</td>
-                        <td>{{'{{product.product_quantity  }}'}}</td>
+                        <td>{{'{{product.product_quantity-product.no_orders}}'}}</td>
                         <td class="form-group">
                                     
-                             <input type="text" class="form-control" pattern="\d*" maxlength="6" ng-model="product.no_orders" id="txtUsername">
+                             <input type="number" class="form-control" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" ng-model="product.new_order" id="txtUsername">
                         </td>
                         <td>
-                        <div ng-if="product.product_quantity > '0'  && product.product_quantity >=product.no_orders"  style="cursor:pointer;color:#ADA5FA;" ng-click=placeOrderToSuContractor(product) class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>
+                        <div ng-if="product.product_quantity > '0' && product.new_order>0 && product.product_quantity >=product.new_order"  style="cursor:pointer;color:#ADA5FA;" ng-click=placeOrderToSuContractor(product) class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>
                          <div ng-if="product.product_quantity <= '0'" class="glyphicon glyphicon-plus" aria-hidden="true"> ORDER </div>
                         </td>
                     </tr>

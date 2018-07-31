@@ -801,7 +801,8 @@ def getStock():
                     'price_per_qty' : productStatus['price_per_qty'],
                     'product_quantity' :productStatus['product_quantity'],
                     'delivery_day' : productStatus['delivery_day'],
-                    'no_orders' : '',
+                    'no_orders' : productStatus['delivery_day'],
+                    'new_order' : '',
                     's_user_name' : productStatus['username'],
                     'supplier_product_id' : productinfo['product_id']
                     }
